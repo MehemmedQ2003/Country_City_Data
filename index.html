@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Country and City Selector</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+</head>
+<body class="bg-light vh-100 d-flex align-items-center justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10 col-sm-12">
+                <select id="countrySelect" class="form-select mb-3">
+                    <option selected disabled>Ölkə seçin</option>
+                </select>
+                <select id="citySelect" class="form-select mb-3 d-none">
+                    <option selected disabled>Şəhər seçin</option>
+                </select>
+                <div id="selectedCity" class="alert alert-info bg-info text-white d-none"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let countriesData = [];
+        const countrySelect = document.getElementById('countrySelect');
+        const citySelect = document.getElementById('citySelect');
+        const selectedCity = document.getElementById('selectedCity');
+        fetch('countries+cities.json')
+            .then(response => response.json())
+            .then(data => {
+                countriesData = data;
+                data.forEach((country, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = country.name;
+                    countrySelect.appendChild(option);
+                });
+            });
+        countrySelect.addEventListener('change', function () {
+            const selectedCountryIndex = this.value;
+            const cities = countriesData[selectedCountryIndex].cities;
+            citySelect.innerHTML = '<option selected disabled>Şəhər seçin</option>';
+            cities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+            citySelect.classList.remove('d-none');
+            selectedCity.classList.add('d-none');
+        });
+        citySelect.addEventListener('change', function () {
+            selectedCity.textContent = `Seçilmiş şəhər: ${this.value}`;
+            selectedCity.classList.remove('d-none');
+        });
+    </script>
+</body>
+</html>
